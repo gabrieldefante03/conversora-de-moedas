@@ -54,14 +54,19 @@ function App() {
       setLoading(true)
       try {
         const response = await fetch(
-          `https://api.exchangerate-api.com/v4/latest/${fromCurrency}`
+          `https://v6.exchangerate-api.com/v6/9bd2e35f4c6b117ea8040e1e/latest/${fromCurrency}`
         )
         const data = await response.json()
-        const rate = data.rates[toCurrency]
-        setExchangeRate(rate)
-        const numAmount = getNumericAmount()
-        setResult((numAmount * rate).toFixed(2))
-        setLastUpdate(new Date().toLocaleString('pt-BR'))
+        
+        if (data.result === 'success') {
+          const rate = data.conversion_rates[toCurrency]
+          setExchangeRate(rate)
+          const numAmount = getNumericAmount()
+          setResult((numAmount * rate).toFixed(2))
+          setLastUpdate(new Date().toLocaleString('pt-BR'))
+        } else {
+          console.error('Erro na resposta da API:', data)
+        }
       } catch (error) {
         console.error('Erro ao buscar taxa de câmbio:', error)
       } finally {
